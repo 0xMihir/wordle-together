@@ -1,3 +1,3 @@
 # wordle-together
 
-Multiplayer wordle using node.js and websockets
+Multiplayer wordle using Node.js, Svelte and websockets
