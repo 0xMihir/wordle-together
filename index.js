@@ -12,7 +12,7 @@ const publicPath = path.resolve(__dirname, 'public')
 const serveStatic = serveDir(publicPath)
 const indexHTML = fs.readFileSync(path.resolve(__dirname, 'public/index.html'), 'utf8')
 
-const baseURL = 'http://localhost:8080/game/'
+const baseURL = 'https://wordletoogether.com/game/'
 const redirectGame = (res) => {
     res.writeStatus('301').writeHeader('Location', baseURL + createRoom()).end()
 }
