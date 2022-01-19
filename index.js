@@ -147,6 +147,6 @@ App()
             }, 1000)
         }
 
-    }).listen(8080, () => {
+    }).listen(7777, () => {
         console.log('Listening on port 8080')
     })
