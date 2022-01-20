@@ -18,6 +18,8 @@ const baseURL = process.env.BASE_URL || 'http://localhost:8080/game/'
 const redirectGame = (res) => {
     res.writeStatus('301').writeHeader('Location', baseURL + createRoom()).end()
 }
+const port = process.env.PORT || 8080
+
 App()
     .get('/', (res, req) => redirectGame(res))
     .get('/game', (res, req) => redirectGame(res))
@@ -149,6 +151,6 @@ App()
             }, 1000)
         }
 
-    }).listen(7777, () => {
-        console.log('Listening on port 8080')
+    }).listen(port, () => {
+        console.log('Listening on port ' + port)
     })
