@@ -1,0 +1,11 @@
+/node_modules/
+/public/build/
+
+.git
+
+.DS_Store
+
+.vscode/
+.eslint*
+.gitignore
+README.md

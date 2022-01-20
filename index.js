@@ -5,6 +5,8 @@ import { serveDir } from 'uwebsocket-serve'
 import { fileURLToPath } from 'url'
 import { createRoom, roomExists, createPlayer, getRoom, validateWord, tryDeleteRoom } from './utils.js'
 import codes, { wsCodes } from './statusCodes.js'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const { App, DEDICATED_COMPRESSOR_3KB } = uws
@@ -12,7 +14,7 @@ const publicPath = path.resolve(__dirname, 'public')
 const serveStatic = serveDir(publicPath)
 const indexHTML = fs.readFileSync(path.resolve(__dirname, 'public/index.html'), 'utf8')
 
-const baseURL = 'https://wordletoogether.com/game/'
+const baseURL = process.env.BASE_URL || 'http://localhost:8080/game/'
 const redirectGame = (res) => {
     res.writeStatus('301').writeHeader('Location', baseURL + createRoom()).end()
 }
