@@ -9,7 +9,7 @@ COPY package.json yarn.lock ./
 RUN yarn install
 
 COPY  . . 
-RUN ls -a
+
 
 RUN yarn build
 
@@ -24,7 +24,9 @@ COPY --from=builder /build/public/ ./
 
 COPY . .
 
-RUN ls -a ./
+RUN rm ./node_modules/uWebSockets.js/uws_win32*
+RUN rm ./node_modules/uWebSockets.js/uws_darwin*
+
 FROM gcr.io/distroless/nodejs:16
 ENV NODE_ENV=production
 
