@@ -57,7 +57,7 @@ class wsHandler {
                             if (!acc[letter]) { acc[letter] = colorArray[i] }
                             return acc
                         }, {})
-                        cb(null, { event: 'guess', colorArray, colorMap, player: 0 })
+                        cb(null, { event: 'guess', colorArray, colorMap, player: 0, word })
                         break
                     }
                     case 21: {
@@ -69,25 +69,26 @@ class wsHandler {
         })
         this.ws.addEventListener('close', (event) => {
             const code = event.code
+            const word = event.reason
+            console.log(word)
             switch (code) {
                 case wsCodes.roomNotFound:
-                    console.log('room not found')
+                    cb(new Error('roomNotFound'), null)
                     break
                 case wsCodes.roomFull:
+                    cb(new Error('roomFull'), null)
                     console.log('room full')
                     break
                 case wsCodes.win:
-                    cb(null, { event: 'guess', colorArray: Array(5).fill('var(--bg-correct)'), player: 0 })
-                    cb(null, { event: 'gameOver', win: true })
+                    cb(null, { event: 'gameOver', win: true, word: word })
                     console.log('win')
                     break
                 case wsCodes.winLastPlayer:
-                    cb(null, { event: 'gameOver', win: true })
+                    cb(null, { event: 'gameOver', win: true, word: word })
                     console.log('win last player')
                     break
                 case wsCodes.lost:
-                    cb(null, { event: 'guess', colorArray: Array(5).fill('var(--bg-correct)'), player: 1 })
-                    cb(null, { event: 'gameOver', win: false })
+                    cb(null, { event: 'gameOver', win: false, word: word })
                     console.log('lost')
                     break
                 default:

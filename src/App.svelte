@@ -8,13 +8,25 @@
     let waitingModal = window.location.href.includes('/game')
     let gameOverModal = false
     let gameOverText = ''
+    let gameOverDescription = ''
+    let guessCount = 0
     const url = new URL(window.location.href)
     url.protocol = url.protocol.replace('http', 'ws')
+
     const ws = new WsHandler(url.href, (err, e) => {
         if (err) {
             switch (err.message) {
-                case 'gameNotFound':
+                case 'roomNotFound':
+                    waitingModal = false
                     gameOverText = 'Game not found!'
+                    gameOverModal = true
+                    setTimeout(() => {
+                        window.reload()
+                    }, 2000)
+                    break
+                case 'roomFull':
+                    waitingModal = false
+                    gameOverText = 'Game is full!'
                     gameOverModal = true
                     setTimeout(() => {
                         window.reload()
@@ -23,7 +35,6 @@
                 case 'invalidWord':
                 case 'notInList':
                     guessGrid.shakeRow()
-                    console.log(guessGrid)
                     break
                 default:
                     break
@@ -36,11 +47,14 @@
                 if (e.player === 0) {
                     if (e.colorMap) {
                         Object.keys(e.colorMap).forEach((letter) => {
-                            $colorList[letter] = e.colorMap[letter]
+                            if ($colorList[letter] !== 'var(--bg-correct)') {
+                                $colorList[letter] = e.colorMap[letter]
+                            }
                         })
                     }
                     guessGrid.setColorRow(e.colorArray)
                     guessGrid.incrementRow()
+                    guessCount++
                 } else {
                     opponentGrid.setColorRow(e.colorArray)
                     opponentGrid.incrementRow()
@@ -50,15 +64,27 @@
                 waitingModal = false
                 break
             case 'gameOver':
-                gameOverModal = true
                 if (e.win) {
-                    gameOverText = 'You Win!'
+                    gameOverText = 'You Won!'
+                    if (!e.word || e.word === guessGrid.getWord()) {
+                        guessGrid.setColorRow(Array(5).fill('var(--bg-correct)'))
+                    }
                 } else {
-                    gameOverText = 'You Lost...'
+                    gameOverText = 'You Lost…'
+                    if (guessCount !== 6) {
+                        opponentGrid.setColorRow(Array(5).fill('var(--bg-correct)'))
+                    }
                 }
+                gameOverDescription = `The word was ${e.word || guessGrid.getWord()}.`
+                gameOverModal = true
                 break
             case 'matchMakeFound':
                 window.location.href = `/game/${e.gameId}`
+                break
+            case 'roomFull':
+                waitingModal = false
+                gameOverText = 'Room is full!'
+                gameOverModal = true
                 break
             default:
                 break
@@ -130,13 +156,13 @@
         title={'Waiting for Opponent'}
     >
         <div class="actions">
-            <button on:click={matchMake}>Play With Anyone</button>
-            <button on:click={navigator.clipboard.writeText(window.location.href)}>Copy Link</button>   
+            <button on:click={() => { matchMake() }}>Play With Anyone</button>
+            <button on:click={() => { navigator.clipboard.writeText(window.location.href) }}>Copy Link</button>   
         </div>
     </Modal>
-    <Modal bind:modalShow={gameOverModal} bind:title={gameOverText} >
+    <Modal bind:modalShow={gameOverModal} bind:title={gameOverText} bind:description={gameOverDescription}>
         <div class="actions">
-            <button>Play again</button>
+            <button on:click={() => { window.location.href = '/game/' }}>Play again</button>
         </div>
     </Modal>
 </main>

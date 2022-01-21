@@ -65,7 +65,9 @@ App()
                         if (match) {
                             ws.send(textEncoder.encode(match), true)
                         } else {
-                            room.matchMake = true
+                            if (room.players !== 2) {
+                                room.matchMake = true
+                            }
                         }
                         break
                     }
@@ -96,19 +98,23 @@ App()
                                 testCounts[letter] = testCounts[letter] += 1
                             }
                         })
-                        console.log(player, Int8Array.from(returnArray))
+                        // console.log(player, Int8Array.from(returnArray))
                         if (returnArray.every(color => color === 2)) {
                         // disconnect all players
                             delete player.ws
                             ws.end(wsCodes.win)
+                            Object.values(room.players).forEach(player => {
+                                player.ws?.end(wsCodes.lost, room.word)
+                            })
                         } else {
                             if (player.guessCount === 6) {
+                                ws.send(Int8Array.of(...messageArray, ...returnArray), true)
                                 delete player.ws
-                                ws.send(Int8Array.from(returnArray), true)
-                                ws.end(wsCodes.lost)
+                                ws.end(wsCodes.lost, room.word)
                                 // send win to everyone
                                 Object.values(room.players).forEach(player => {
-                                    player.ws?.end(wsCodes.win)
+                                    player.ws?.send(Int8Array.from(returnArray), true)
+                                    player.ws?.end(wsCodes.win, room.word)
                                 })
                             } else {
                             // send guess to everyone
@@ -116,6 +122,8 @@ App()
                                     if (id !== ws.id) {
                                         room.players[id].ws?.send(Int8Array.from(returnArray), true)
                                     } else {
+                                        // will need to see if 10 byte message is better or worse
+                                        // than many promise approach
                                         ws.send(Int8Array.of(...messageArray, ...returnArray), true)
                                     }
                                 })
@@ -147,10 +155,13 @@ App()
         open: (ws) => {
             const room = getRoom(ws.room)
             const players = room.players
-            players[ws.id].ws = ws
             if (Object.keys(players).length > 2) {
-                ws.end(wsCodes.roomFull)
-            } else if (Object.keys(players).length === 2) {
+                return ws.end(wsCodes.roomFull)
+            }
+
+            players[ws.id].ws = ws
+
+            if (Object.keys(players).length === 2) {
                 room.matchMake = false
                 Object.values(players).forEach(player => {
                     player?.ws.send(arrayCodes.roomReady, true)
@@ -160,15 +171,13 @@ App()
 
         close: (ws, code, message) => {
             const room = getRoom(ws.room)
-            if (code === wsCodes.win) {
-                Object.values(room.players).forEach(player => {
-                    player.ws?.end(wsCodes.lost)
-                })
-            } else if (code === 1001) {
+            // if (!wsCodeList.includes(code)) {
+            if (code === 1001) {
                 Object.keys(room.players).forEach(id => {
-                    if (id !== ws.id) { room.players[id].ws?.end(wsCodes.winLastPlayer) }
+                    if (id !== ws.id) { room.players[id].ws?.end(wsCodes.winLastPlayer, room.word) }
                 })
             }
+            // }
             delete room.players[ws.id]
 
             setTimeout(() => {
