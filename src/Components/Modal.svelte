@@ -1,13 +1,19 @@
 <script>
     export let title = ''
+    export let description = ''
     export let modalShow = false
 </script>
 
 <div class="modal-background" style="display: {modalShow ? 'block' : 'none'};">
     <div class="modal-content">
-        <h1>
-            {title}
-        </h1>
+        <div class="modal-text">
+            <h1>
+                {title}
+            </h1>
+            <p>
+                {description}
+            </p>
+        </div>
         <slot/>
     </div>
 </div>
@@ -41,6 +47,12 @@
     }
     .modal-content h1 {
         font-size: 1.5em;
+    }
+
+    .modal-content p {
+        font-size: 1em;
+        margin-top: calc(36px - 1em);
+        color: var(--color-text-secondary);
     }
 
     .modal-content :global(.actions)  {

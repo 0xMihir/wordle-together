@@ -69,6 +69,7 @@ h2 {
     --color-primary-light: #2e7d320b;
     --color-primary-light2: #2e7d3235;
     --color-button-text: #fff;
+    --color-text-secondary: #999;
 }
 @media (prefers-color-scheme: dark) {
     body {
