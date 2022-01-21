@@ -30,7 +30,7 @@ const port = parseInt(process.env.PORT) || 8080
 const textEncoder = new TextEncoder()
 
 App()
-    .get('/', (res, req) => res.writeStatus('200').end(indexHTML))
+    .get('/', (res, req) => res.writeStatus('200').writeHeader('Content-Type', 'text/html; charset=UTF-8').end(indexHTML))
     .get('/game', (res, req) => redirectGame(res))
     .get('/game/', (res, req) => redirectGame(res))
     .get('/*', serveStatic)
@@ -42,7 +42,7 @@ App()
         if (!roomExists(room) || !room) {
             redirectGame(res)
         } else {
-            res.writeStatus('200').end(gameHTML)
+            res.writeStatus('200').writeHeader('Content-Type', 'text/html; charset=UTF-8').end(gameHTML)
         }
     })
     .ws('/game/:room', {
