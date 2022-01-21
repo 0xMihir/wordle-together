@@ -5,17 +5,19 @@ export default {
     roomFull: Int8Array.of(-4),
     roomNotFilled: Int8Array.of(-5),
     win: Int8Array.of(1),
-    roomReady: Int8Array.of(2)
+    roomReady: Int8Array.of(2),
+    matchMake: Int8Array.of(3)
 }
 
-export const codes = {
+export const intCodes = {
     roomNotFound: -1,
     invalidWord: -2,
     notInList: -3,
     roomFull: -4,
     roomNotFilled: -5,
     win: 1,
-    roomReady: 2
+    roomReady: 2,
+    matchMake: 3
 }
 
 export const wsCodes = {

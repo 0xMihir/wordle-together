@@ -1,46 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-<head>
-    <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width,initial-scale=1'>
+        <title>Wordle Together</title>
 
-    <title>Wordle Together</title>
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="stylesheet" href="/global.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <!-- Primary Meta Tags -->
+        <title>Wordle Together</title>
+        <meta name="title" content="Wordle Together — Multiplayer Wordle" />
+        <meta
+            name="description"
+            content="Wordle Together: Play wordle with your friends! Can you win?"
+        />
 
-    <link rel='icon' type='image/png' href='/favicon.png'>
-    <link rel='stylesheet' href='/global.css'>
-    <link rel='stylesheet' href='/build/bundle.css' defer>
-    <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined"></noscript>
-    <link rel="preload" href="/shake-horizontal.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/shake-horizontal.css"></noscript>
-    
-    
-    <script defer src='/build/bundle.js'></script>
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://wordletogether.com/" />
+        <meta
+            property="og:title"
+            content="Wordle Together — Multiplayer Wordle"
+        />
+        <meta
+            property="og:description"
+            content="Wordle Together: Play wordle with your friends! Can you win?"
+        />
+        <meta
+            property="og:image"
+            content="https://metatags.io/assets/meta-tags-16a33a6a8531e519cc0936fbba0ad904e52d35f34a46c97a2c9f6f7dd7d336f2.png"
+        />
+        <meta content="#2e7d32" data-react-helmet="true" name="theme-color" />
 
-    <!-- Primary Meta Tags -->
-    <title>Wordle Together</title>
-    <meta name="title" content="Wordle Together">
-    <meta name="description" content="Play wordle with friends!">
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://wordletogether.com/" />
+        <meta
+            property="twitter:title"
+            content="Wordle Together — Multiplayer Wordle"
+        />
+        <meta
+            property="twitter:description"
+            content="Wordle Together: Play wordle with your friends! Can you win?"
+        />
+        <meta
+            property="twitter:image"
+            content="https://metatags.io/assets/meta-tags-16a33a6a8531e519cc0936fbba0ad904e52d35f34a46c97a2c9f6f7dd7d336f2.png"
+        />
+    </head>
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://metatags.io/">
-    <meta property="og:title" content="Wordle Together">
-    <meta property="og:description" content="Play wordle with friends!">
-    <meta property="og:image"
-        content="https://metatags.io/assets/meta-tags-16a33a6a8531e519cc0936fbba0ad904e52d35f34a46c97a2c9f6f7dd7d336f2.png">
+    <body>
+        <header>
+            <h1>Wordle Together</h1>
+        </header>
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://metatags.io/">
-    <meta property="twitter:title" content="Wordle Together">
-    <meta property="twitter:description" content="Play wordle with friends!">
-    <meta property="twitter:image"
-        content="https://metatags.io/assets/meta-tags-16a33a6a8531e519cc0936fbba0ad904e52d35f34a46c97a2c9f6f7dd7d336f2.png">
-</head>
+        <div class="main">
+            <div class="left"></div>
+            <div class="middle">
+                <p>
+                    You know the drill.
+                    <br>
+                    5 letters. 6 guesses.
+                    <br>
+                    Can you beat your friends?
+                </p>
+                <a class="button" href="/game/">Play now</a>
+            </div>
+            <div class="right"></div>
+        </div>
 
-<body>
-</body>
-
+        <style>
+            header {
+                padding: 8px;
+                border-bottom: 1px solid var(--color-border);
+            }
+            .main, .middle {
+                display: flex;     
+                justify-content: space-between;
+                align-items: center;
+            }
+            .middle {
+                flex-flow: column;
+            }
+            .main {
+                height: 100%;
+                padding: 32px;
+                font-size: 24px;
+            }
+            .main p {
+                font-weight: 700;
+                line-height: 1.5;
+                margin: 0;
+                text-align: center;
+            }
+            .main .middle a.button {
+                color: var(--color-button-text);
+                font-weight: 700;
+                text-decoration: none;
+                margin-top: 16px;
+            }
+        </style>
+    </body>
 </html>

@@ -23,9 +23,21 @@ export const createRoom = () => {
     rooms[id] = {
         word: word,
         players: {},
-        letterCounts: letterCounts
+        letterCounts: letterCounts,
+        matchMake: false
     }
     return id
+}
+
+export const matchMake = () => {
+    const keys = Object.keys(rooms)
+    for (let i = 0; i < keys.length; i++) {
+        const room = rooms[keys[i]]
+        if (room.matchMake) {
+            return keys[i]
+        }
+    }
+    return null
 }
 
 export const getRoom = (id) => {

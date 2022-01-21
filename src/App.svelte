@@ -5,7 +5,7 @@
     import WsHandler from './websocketHandler.js'
     import colorList from './stores/stores.js'
     let guessGrid, opponentGrid
-    let waitingModal = true
+    let waitingModal = window.location.href.includes('/game')
     let gameOverModal = false
     let gameOverText = ''
     const url = new URL(window.location.href)
@@ -13,55 +13,55 @@
     const ws = new WsHandler(url.href, (err, e) => {
         if (err) {
             switch (err.message) {
-            case 'gameNotFound':
-                gameOverText = 'Game not found!'
-                gameOverModal = true
-                setTimeout(() => {
-                    window.reload()
-                }, 2000)
-                break
-            case 'invalidWord':
-                guessGrid.shakeRow()
-                console.log(guessGrid)
-                break
-            case 'notInList':
-                guessGrid.shakeRow()
-                console.log(guessGrid)
-                break
-            default:
-                break
+                case 'gameNotFound':
+                    gameOverText = 'Game not found!'
+                    gameOverModal = true
+                    setTimeout(() => {
+                        window.reload()
+                    }, 2000)
+                    break
+                case 'invalidWord':
+                case 'notInList':
+                    guessGrid.shakeRow()
+                    console.log(guessGrid)
+                    break
+                default:
+                    break
             }
             return
         }
         switch (e.event) {
-        case 'guess':
-            console.log(e)
-            if (e.player === 0) {
-                if (e.colorMap) {
-                    Object.keys(e.colorMap).forEach((letter) => {
-                        $colorList[letter] = e.colorMap[letter]
-                    })
+            case 'guess':
+                console.log(e)
+                if (e.player === 0) {
+                    if (e.colorMap) {
+                        Object.keys(e.colorMap).forEach((letter) => {
+                            $colorList[letter] = e.colorMap[letter]
+                        })
+                    }
+                    guessGrid.setColorRow(e.colorArray)
+                    guessGrid.incrementRow()
+                } else {
+                    opponentGrid.setColorRow(e.colorArray)
+                    opponentGrid.incrementRow()
                 }
-                guessGrid.setColorRow(e.colorArray)
-                guessGrid.incrementRow()
-            } else {
-                opponentGrid.setColorRow(e.colorArray)
-                opponentGrid.incrementRow()
-            }
-            break
-        case 'gameStart':
-            waitingModal = false
-            break
-        case 'gameOver':
-            gameOverModal = true
-            if (e.win) {
-                gameOverText = 'You Win!'
-            } else {
-                gameOverText = 'You Lost...'
-            }
-            break
-        default:
-            break
+                break
+            case 'gameStart':
+                waitingModal = false
+                break
+            case 'gameOver':
+                gameOverModal = true
+                if (e.win) {
+                    gameOverText = 'You Win!'
+                } else {
+                    gameOverText = 'You Lost...'
+                }
+                break
+            case 'matchMakeFound':
+                window.location.href = `/game/${e.gameId}`
+                break
+            default:
+                break
         }
     })
     const handleEnter = () => {
@@ -96,6 +96,9 @@
     //     event.returnValue = ''
     //     return '...'
     // }
+    const matchMake = () => {
+        ws.matchMake()
+    }
 </script>
 
 <!-- <svelte:window on:beforeunload={beforeUnload}/> -->
@@ -124,9 +127,18 @@
     </div>
     <Modal
         bind:modalShow={waitingModal}
-        text={'Waiting for opponent to join...'}
-    />
-    <Modal bind:modalShow={gameOverModal} bind:text={gameOverText} />
+        title={'Waiting for Opponent'}
+    >
+        <div class="actions">
+            <button on:click={matchMake}>Play With Anyone</button>
+            <button on:click={navigator.clipboard.writeText(window.location.href)}>Copy Link</button>   
+        </div>
+    </Modal>
+    <Modal bind:modalShow={gameOverModal} bind:title={gameOverText} >
+        <div class="actions">
+            <button>Play again</button>
+        </div>
+    </Modal>
 </main>
 
 <style>

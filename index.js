@@ -3,8 +3,16 @@ import fs from 'fs'
 import uws from 'uWebSockets.js'
 import { serveDir } from 'uwebsocket-serve'
 import { fileURLToPath } from 'url'
-import { createRoom, roomExists, createPlayer, getRoom, validateWord, tryDeleteRoom } from './utils.js'
-import codes, { wsCodes } from './statusCodes.js'
+import {
+    createRoom,
+    roomExists,
+    createPlayer,
+    getRoom,
+    validateWord,
+    tryDeleteRoom,
+    matchMake
+} from './utils.js'
+import arrayCodes, { intCodes, wsCodes } from './statusCodes.js'
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -12,16 +20,17 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const { App, DEDICATED_COMPRESSOR_3KB } = uws
 const publicPath = path.resolve(__dirname, 'public')
 const serveStatic = serveDir(publicPath)
+const gameHTML = fs.readFileSync(path.resolve(__dirname, 'public/game.html'), 'utf8')
 const indexHTML = fs.readFileSync(path.resolve(__dirname, 'public/index.html'), 'utf8')
-
 const baseURL = process.env.BASE_URL || 'http://localhost:8080/game/'
 const redirectGame = (res) => {
-    res.writeStatus('301').writeHeader('Location', baseURL + createRoom()).end()
+    res.writeStatus('307').writeHeader('Location', baseURL + createRoom()).end()
 }
-const port = process.env.PORT || 8080
+const port = parseInt(process.env.PORT) || 8080
+const textEncoder = new TextEncoder()
 
 App()
-    .get('/', (res, req) => redirectGame(res))
+    .get('/', (res, req) => res.writeStatus('200').end(indexHTML))
     .get('/game', (res, req) => redirectGame(res))
     .get('/game/', (res, req) => redirectGame(res))
     .get('/*', serveStatic)
@@ -33,7 +42,7 @@ App()
         if (!roomExists(room) || !room) {
             redirectGame(res)
         } else {
-            res.writeStatus('200').end(indexHTML)
+            res.writeStatus('200').end(gameHTML)
         }
     })
     .ws('/game/:room', {
@@ -47,56 +56,70 @@ App()
         /* For brevity we skip the other events (upgrade, open, ping, pong, close) */
         message: (ws, message, isBinary) => {
             const room = getRoom(ws.room)
-            if (!room) { ws.end(wsCodes.roomNotFound) } else if (Object.keys(room.players).length < 2) { return ws.send(codes.roomNotFilled, true) } else {
-                const player = room.players[ws.id]
-                if (message.byteLength !== 5) {
-                    ws.send(codes.invalidWord, true)
-                } else if (!validateWord(message)) {
-                    ws.send(codes.notInList, true)
-                } else {
-                    const messageArray = new Uint8Array(message)
-                    const returnArray = [0, 0, 0, 0, 0]
-                    const testCounts = {}
-                    player.guessCount++
-                    messageArray.forEach((letter, i) => {
-                        if (!testCounts[letter]) { testCounts[letter] = 0 }
-                        if (letter < 65 || letter > 122) {
-                            ws.send(codes.invalidWord, true)
-                            return
-                        } if (room.word[i] === letter) {
-                            returnArray[i] = 2 // Green
-                            testCounts[letter] = testCounts[letter] += 1
-                        }
-                    })
-                    messageArray.forEach((letter, i) => {
-                        if (testCounts[letter] < room.letterCounts[letter]) {
-                            returnArray[i] = 1 // Yellow
-                            testCounts[letter] = testCounts[letter] += 1
-                        }
-                    })
-                    console.log(player, Int8Array.from(returnArray))
-                    if (returnArray.every(color => color === 2)) {
-                        // disconnect all players
-                        delete player.ws
-                        ws.end(wsCodes.win)
-                    } else {
-                        if (player.guessCount === 6) {
-                            delete player.ws
-                            ws.send(Int8Array.from(returnArray), true)
-                            ws.end(wsCodes.lost)
-                            // send win to everyone
-                            Object.values(room.players).forEach(player => {
-                                player.ws?.end(wsCodes.win)
-                            })
+            if (message.byteLength === 1) {
+                const dataArray = new Int8Array(message)
+                const code = dataArray[0]
+                switch (code) {
+                    case intCodes.matchMake: {
+                        const match = matchMake()
+                        if (match) {
+                            ws.send(textEncoder.encode(match), true)
                         } else {
+                            room.matchMake = true
+                        }
+                        break
+                    }
+                }
+            } else if (!room) { ws.end(wsCodes.roomNotFound) } else if (Object.keys(room.players).length < 2) { return ws.send(arrayCodes.roomNotFilled, true) } else {
+                const player = room.players[ws.id]
+                if (message.byteLength === 5) {
+                    if (!validateWord(message)) {
+                        ws.send(arrayCodes.notInList, true)
+                    } else {
+                        const messageArray = new Uint8Array(message)
+                        const returnArray = [0, 0, 0, 0, 0]
+                        const testCounts = {}
+                        player.guessCount++
+                        messageArray.forEach((letter, i) => {
+                            if (!testCounts[letter]) { testCounts[letter] = 0 }
+                            if (letter < 65 || letter > 122) {
+                                ws.send(arrayCodes.invalidWord, true)
+                                return
+                            } if (room.word[i] === letter) {
+                                returnArray[i] = 2 // Green
+                                testCounts[letter] = testCounts[letter] += 1
+                            }
+                        })
+                        messageArray.forEach((letter, i) => {
+                            if (returnArray[i] === 0 && testCounts[letter] < room.letterCounts[letter]) {
+                                returnArray[i] = 1 // Yellow
+                                testCounts[letter] = testCounts[letter] += 1
+                            }
+                        })
+                        console.log(player, Int8Array.from(returnArray))
+                        if (returnArray.every(color => color === 2)) {
+                        // disconnect all players
+                            delete player.ws
+                            ws.end(wsCodes.win)
+                        } else {
+                            if (player.guessCount === 6) {
+                                delete player.ws
+                                ws.send(Int8Array.from(returnArray), true)
+                                ws.end(wsCodes.lost)
+                                // send win to everyone
+                                Object.values(room.players).forEach(player => {
+                                    player.ws?.end(wsCodes.win)
+                                })
+                            } else {
                             // send guess to everyone
-                            Object.keys(room.players).forEach(id => {
-                                if (id !== ws.id) {
-                                    room.players[id].ws?.send(Int8Array.from(returnArray), true)
-                                } else {
-                                    ws.send(Int8Array.of(...messageArray, ...returnArray), true)
-                                }
-                            })
+                                Object.keys(room.players).forEach(id => {
+                                    if (id !== ws.id) {
+                                        room.players[id].ws?.send(Int8Array.from(returnArray), true)
+                                    } else {
+                                        ws.send(Int8Array.of(...messageArray, ...returnArray), true)
+                                    }
+                                })
+                            }
                         }
                     }
                 }
@@ -122,13 +145,15 @@ App()
             }
         },
         open: (ws) => {
-            const players = getRoom(ws.room).players
+            const room = getRoom(ws.room)
+            const players = room.players
             players[ws.id].ws = ws
             if (Object.keys(players).length > 2) {
                 ws.end(wsCodes.roomFull)
             } else if (Object.keys(players).length === 2) {
+                room.matchMake = false
                 Object.values(players).forEach(player => {
-                    player?.ws.send(codes.roomReady, true)
+                    player?.ws.send(arrayCodes.roomReady, true)
                 })
             }
         },

@@ -2,7 +2,7 @@ body {
     color: #333;
     margin: 0;
     box-sizing: border-box;
-    font-family: sans-serif;
+    font-family: 'Manrope', sans-serif;
 }
 
 html,
@@ -65,6 +65,10 @@ h2 {
     --color-error: #a7442c;
     --color-border: #afafaf;
     --color-bg: #fff;
+    --color-primary: #2e7d32;
+    --color-primary-light: #2e7d320b;
+    --color-primary-light2: #2e7d3235;
+    --color-button-text: #fff;
 }
 @media (prefers-color-scheme: dark) {
     body {
@@ -77,4 +81,27 @@ h2 {
         --color-error: #a7442c;
         --bg-incorrect: #4a4a4a;
     }
+}
+
+.button {
+    border: none;
+    background-color: var(--color-primary);
+    color: var(--color-button-text);
+    text-transform: uppercase;
+    padding: 0 16px;
+    min-width: 64px;
+    min-height: 36px;
+    border-radius: 4px;
+    user-select: none;
+    box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    font-weight: 500;
+}
+.button:hover {
+    box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+    filter: brightness(110%);
+}
+.button:active {
+    filter: brightness(120%);
 }
