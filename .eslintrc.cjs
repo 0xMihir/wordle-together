@@ -21,7 +21,7 @@ module.exports = {
         }
     ],
     rules: {
-        indent: [2, 4],
+        indent: [2, 4, { SwitchCase: 1 }],
         'no-multiple-empty-lines': ['error', { max: 1, maxBOF: 2, maxEOF: 0 }]
     }
 }
