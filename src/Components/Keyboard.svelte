@@ -52,13 +52,13 @@
     .keyboard {
         display: flex;
         flex-direction: column;
-        gap: 0.2em;
+        gap: 3px;
     }
 
     .keyboard-row {
         display: flex;
         flex-direction: row;
-        gap: 0.2em;
+        gap: 3px;
         align-items: center;
         justify-content: center;
     }
@@ -67,7 +67,7 @@
         background-color: #dbdbdb;
         border-radius: 8px;
         margin: 0;
-        flex-grow: 2;
+        flex-grow: 1;
         padding: 0;
         font-weight: bold;
         user-select: none;
