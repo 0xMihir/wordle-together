@@ -66,6 +66,7 @@ h2 {
     --color-border: #afafaf;
     --color-bg: #fff;
     --color-primary: #2e7d32;
+    --color-primary-button: #2e7d32;
     --color-primary-light: #2e7d320b;
     --color-primary-light2: #2e7d3235;
     --color-button-text: #fff;
@@ -81,12 +82,15 @@ h2 {
         --color-bg: #131516;
         --color-error: #a7442c;
         --bg-incorrect: #4a4a4a;
+        --color-primary: #82d186;
+        --color-primary-light: #82d1860b;
+        --color-primary-light2: #82d18635;
     }
 }
 
 .button {
     border: none;
-    background-color: var(--color-primary);
+    background-color: var(--color-primary-button);
     color: var(--color-button-text);
     text-transform: uppercase;
     padding: 0 16px;

@@ -1,6 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import uws from 'uWebSockets.js'
+import isbot from 'isbot'
 import { serveDir } from 'uwebsocket-serve'
 import { fileURLToPath } from 'url'
 import {
@@ -23,16 +24,20 @@ const serveStatic = serveDir(publicPath)
 const gameHTML = fs.readFileSync(path.resolve(__dirname, 'public/game.html'), 'utf8')
 const indexHTML = fs.readFileSync(path.resolve(__dirname, 'public/index.html'), 'utf8')
 const baseURL = process.env.BASE_URL || 'http://localhost:8080/game/'
-const redirectGame = (res) => {
-    res.writeStatus('307').writeHeader('Location', baseURL + createRoom()).end()
+const redirectGame = (res, req) => {
+    if (!isbot(req.getHeader('user-agent'))) {
+        res.writeStatus('307').writeHeader('Location', baseURL + createRoom()).end()
+    } else {
+        res.writeStatus('200').writeHeader('Content-Type', 'text/html; charset=UTF-8').end(gameHTML)
+    }
 }
 const port = parseInt(process.env.PORT) || 8080
 const textEncoder = new TextEncoder()
 
 App()
     .get('/', (res, req) => res.writeStatus('200').writeHeader('Content-Type', 'text/html; charset=UTF-8').end(indexHTML))
-    .get('/game', (res, req) => redirectGame(res))
-    .get('/game/', (res, req) => redirectGame(res))
+    .get('/game', redirectGame)
+    .get('/game/', redirectGame)
     .get('/*', serveStatic)
     .get('/game/:room', (res, req) => {
         res.onAborted(() => {
@@ -40,7 +45,7 @@ App()
         })
         const room = req.getParameter(0)
         if (!roomExists(room) || !room) {
-            redirectGame(res)
+            redirectGame(res, req)
         } else {
             res.writeStatus('200').writeHeader('Content-Type', 'text/html; charset=UTF-8').end(gameHTML)
         }
