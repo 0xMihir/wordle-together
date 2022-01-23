@@ -16,21 +16,22 @@
         "eslint-config-standard": "^16.0.3",
         "eslint-plugin-import": "^2.25.4",
         "eslint-plugin-n": "^14.0.0",
+        "eslint-plugin-node": "^11.1.0",
         "eslint-plugin-promise": "^5.2.0",
         "eslint-plugin-svelte3": "^3.4.0",
         "rollup": "^2.3.4",
         "rollup-plugin-css-only": "^3.1.0",
         "rollup-plugin-livereload": "^2.0.0",
         "rollup-plugin-svelte": "^7.0.0",
+        "rollup-plugin-workbox": "^6.2.0",
         "sirv-cli": "^2.0.0",
-        "svelte": "^3.0.0",
-        "eslint-plugin-node": "^11.1.0"
+        "svelte": "^3.0.0"
     },
     "dependencies": {
         "dotenv": "^14.2.0",
         "isbot": "^3.4.0",
         "nanoid": "^3.1.32",
-        "uwebsocket-serve": "^1.0.7",
-        "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.6.0"
+        "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.6.0",
+        "uwebsocket-serve": "^1.0.7"
     }
 }

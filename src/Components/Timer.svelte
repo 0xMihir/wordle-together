@@ -1,0 +1,42 @@
+<script>
+    let time = 0
+    let minutes = 0
+    let seconds = 0
+    
+    export const startTimer = () => {
+        setInterval(
+            handleTimer, 1000)
+    }
+
+    const handleTimer = () => {
+        time += 1
+        minutes = Math.floor(time / 60)
+        seconds = time % 60
+    }
+</script>
+
+
+<div class="timer">
+    <span class="material-icons-outlined">
+        timer
+    </span>
+    <span class="time">
+        {minutes}:{seconds.toString().padStart(2, '0')}
+    </span>
+</div>
+
+<style> 
+    .timer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .timer span {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    .timer .time {
+        min-width: 50px;
+        text-align: left;
+    }
+</style>

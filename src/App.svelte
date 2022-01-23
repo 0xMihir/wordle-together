@@ -2,6 +2,7 @@
     import LetterGrid from './Components/LetterGrid.svelte'
     import Keyboard from './Components/Keyboard.svelte'
     import Modal from './Components/Modal.svelte'
+    import Timer from './Components/Timer.svelte'
     import WsHandler from './websocketHandler.js'
     import colorList from './stores/stores.js'
     let guessGrid, opponentGrid
@@ -10,6 +11,7 @@
     let gameOverText = ''
     let gameOverDescription = ''
     let guessCount = 0
+    let timer
     const url = new URL(window.location.href)
     url.protocol = url.protocol.replace('http', 'ws')
 
@@ -62,6 +64,7 @@
                 break
             case 'gameStart':
                 waitingModal = false
+                timer.startTimer()
                 break
             case 'gameOver':
                 if (e.win) {
@@ -132,6 +135,7 @@
 <main>
     <header>
         <h1>Wordle Together</h1>
+        <div><Timer bind:this={timer}/></div>
     </header>
 
     <div class="game-container">
@@ -174,10 +178,7 @@
         align-items: stretch;
         height: 99%;
     }
-    header {
-        padding: 8px;
-        border-bottom: 1px solid var(--color-border);
-    }
+    
     .game-container {
         display: flex;
         flex-flow: column;

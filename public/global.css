@@ -12,6 +12,14 @@ body {
     display: flex;
     flex-flow: column;
 }
+header {
+    padding: 8px;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: space-between;
+}
 
 a {
     color: rgb(0, 100, 200);

@@ -1,5 +1,7 @@
 {
     "name": "Wordle Together",
+    "short_name": "Wordle Together",
+    "description": "Wordle Together: Play wordle with your friends! Can you win?",
     "start_url": "/",
     "id": "wordle_together",
     "icons": [
@@ -20,7 +22,16 @@
             "purpose": "maskable"
         }
     ],
-    "theme_color": "#ffffff",
-    "background_color": "#ffffff",
-    "display": "standalone"
+    "theme_color": "#6aaa64",
+    "background_color": "#2e7d32",
+    "display": "standalone",
+    "shortcuts": [
+        {
+            "name": "New Game",
+            "short_name": "Game",
+            "description": "Play new game",
+            "url": "/game",
+            "icons": [{ "src": "/android-chrome-192x192.png", "sizes": "192x192" }]
+          }
+    ]
 }
