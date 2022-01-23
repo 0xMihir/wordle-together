@@ -1,4 +1,5 @@
 <script>    
+    import { mapColor } from '../utils.js'
     import colorList from '../stores/stores.js'
     import { createEventDispatcher } from 'svelte'
     
@@ -37,7 +38,7 @@
                     <button
                         class="keyboard-letter key"
                         name="{letter}"
-                        style="{$colorList[letter] ? `background-color: ${$colorList[letter]};` : ""}  { $colorList[letter] ? "color: #fff;" : "" }"
+                        style="{$colorList[letter] ? `background-color: ${mapColor($colorList[letter])};` : ""}  { $colorList[letter] ? "color: #fff;" : "" }"
                         on:click={() => dispatch('key', letter)}
                     >
                         {letter}

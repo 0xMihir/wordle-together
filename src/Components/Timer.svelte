@@ -10,7 +10,9 @@
     export const stopTimer = () => {
         clearInterval(interval)
     }
-    
+    export const getTime = () => {
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`
+    }
     const handleTimer = () => {
         time += 1
         minutes = Math.floor(time / 60)

@@ -17,6 +17,7 @@ class wsHandler {
             console.log('connected')
         })
         this.sendWordPromise = null
+        const colorMapFunc = color => color === 0 ? 'gray' : color === 1 ? 'yellow' : 'green'
         this.ws.addEventListener('message', (event) => {
             const data = event.data
             if (data instanceof ArrayBuffer) {
@@ -46,12 +47,12 @@ class wsHandler {
                         break
                     }
                     case 5: {
-                        const colorArray = Array.from(dataArray).map(color => color === 0 ? 'var(--bg-incorrect)' : color === 1 ? 'var(--bg-misplaced)' : 'var(--bg-correct)')
+                        const colorArray = Array.from(dataArray).map(colorMapFunc)
                         cb(null, { event: 'guess', colorArray, player: 1 })
                         break
                     }
                     case 10: {
-                        const colorArray = Array.from(dataArray.slice(5)).map(color => color === 0 ? 'var(--bg-incorrect)' : color === 1 ? 'var(--bg-misplaced)' : 'var(--bg-correct)')
+                        const colorArray = Array.from(dataArray.slice(5)).map(colorMapFunc)
                         const word = this.textDecoder.decode(dataArray.slice(0, 5))
                         const colorMap = word.split('').reduce((acc, letter, i) => {
                             if (!acc[letter]) { acc[letter] = colorArray[i] }

@@ -10,6 +10,7 @@
     let gameOverModal = false
     let gameOverText = ''
     let gameOverDescription = ''
+    let win = false
     let guessCount = 0
     let timer
     const url = new URL(window.location.href)
@@ -69,14 +70,15 @@
             case 'gameOver':
                 timer.stopTimer()
                 if (e.win) {
+                    win = true
                     gameOverText = 'You Won!'
                     if (!e.word || e.word === guessGrid.getWord()) {
-                        guessGrid.setColorRow(Array(5).fill('var(--bg-correct)'))
+                        guessGrid.setColorRow(Array(5).fill('green'))
                     }
                 } else {
                     gameOverText = 'You Lost…'
                     if (guessCount !== 6) {
-                        opponentGrid.setColorRow(Array(5).fill('var(--bg-correct)'))
+                        opponentGrid.setColorRow(Array(5).fill('green'))
                     }
                 }
                 gameOverDescription = `The word was ${e.word || guessGrid.getWord()}.`
@@ -162,11 +164,36 @@
     >
         <div class="actions">
             <button on:click={() => { matchMake() }}>Play With Anyone</button>
-            <button on:click={() => { navigator.clipboard.writeText(window.location.href) }}>Copy Link</button>   
+            <button on:click={() => {
+                if ('share' in navigator) {
+                    navigator.share({
+                    title: 'Wordle Together',
+                    text: 'I\'m playing Wordle Together! Can you beat me?',
+                    url: window.location.href
+                    })
+                } else {
+                    navigator.clipboard.writeText(window.location.href)
+                }
+            }}>{'share' in navigator ? 'Share Game' : 'Copy Link'}</button>   
         </div>
     </Modal>
     <Modal bind:modalShow={gameOverModal} bind:title={gameOverText} bind:description={gameOverDescription}>
         <div class="actions">
+            <button on:click={() => {
+                const message = `I just ${win
+                    ? `won a game of Wordle Together in ${timer.getTime()}! Can you beat me?`
+                    : 'lost a game of Wordle Together...'} \n${guessGrid.emojify()}`
+
+                if ('share' in navigator) {
+                    navigator.share({
+                    title: 'Wordle Together',
+                    text: message,
+                    url: 'https://wordletogether.com'
+                    })
+                } else {
+                    navigator.clipboard.writeText(message + '\nhttps://wordletogether.com')
+                }
+            }}>Share</button>
             <button on:click={() => { window.location.href = '/game/' }}>Play again</button>
         </div>
     </Modal>

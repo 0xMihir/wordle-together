@@ -1,4 +1,5 @@
 <script>
+    import { mapColor } from '../utils.js'
     const letterGrid = [
         ['', '', '', '', ''],
         ['', '', '', '', ''],
@@ -20,6 +21,7 @@
     let fontSize
     let gridRow = 0
     let gridCol = 0
+    
     export const handleBackspace = () => {
         if (gridCol > 0) {
             gridCol--
@@ -54,6 +56,25 @@
             shakeRows[gridRow] = false
         }, 300)
     }
+    export const emojify = () => {
+        let string = ''
+        for (let i = 0; i < 6; i++) {
+            string += colorGrid[i].map((color) => {
+                switch (color) {
+                    case 'gray':
+                        return '⬛'
+                    case 'green':
+                        return '🟩'
+                    case 'yellow':
+                        return '🟨'
+                    default:
+                        return '⬜'
+                }
+            }).join('')
+            string += '\n'
+        }
+        return string
+    }
 </script>
 
 <div class="guess-grid">
@@ -61,7 +82,7 @@
         <div class="guess-row {shakeRows[i] ? "shake-horizontal" : ""}" bind:clientHeight={fontSize}>
             {#each row as letter, j}
                 <div class="guess-letter" style="{
-                        colorGrid[i][j] ? `background-color: ${colorGrid[i][j]};` : ""
+                        colorGrid[i][j] ? `background-color: ${mapColor(colorGrid[i][j])};` : ""
                     } { 
                         colorGrid[i][j] ? "color: #fff;" : "" 
                     }; font-size:{
