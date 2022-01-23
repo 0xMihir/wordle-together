@@ -2,12 +2,15 @@
     let time = 0
     let minutes = 0
     let seconds = 0
-    
+    let interval
     export const startTimer = () => {
-        setInterval(
+        interval = setInterval(
             handleTimer, 1000)
     }
-
+    export const stopTimer = () => {
+        clearInterval(interval)
+    }
+    
     const handleTimer = () => {
         time += 1
         minutes = Math.floor(time / 60)

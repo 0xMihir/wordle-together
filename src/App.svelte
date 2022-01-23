@@ -67,6 +67,7 @@
                 timer.startTimer()
                 break
             case 'gameOver':
+                timer.stopTimer()
                 if (e.win) {
                     gameOverText = 'You Won!'
                     if (!e.word || e.word === guessGrid.getWord()) {
@@ -178,7 +179,7 @@
         align-items: stretch;
         height: 99%;
     }
-    
+
     .game-container {
         display: flex;
         flex-flow: column;
