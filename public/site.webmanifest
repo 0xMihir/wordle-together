@@ -1,7 +1,7 @@
 {
     "name": "Wordle Together",
     "short_name": "Wordle Together",
-    "description": "Wordle Together: Play wordle with your friends! Can you win?",
+    "description": "Wordle Together: Play Wordle with your friends! Can you win?",
     "start_url": "/",
     "id": "wordle_together",
     "icons": [
