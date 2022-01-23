@@ -12,5 +12,6 @@ export default {
     ],
     modifyURLPrefix: {
         '': '/'
-    }
+    },
+    skipWaiting: true
 }

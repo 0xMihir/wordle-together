@@ -57,7 +57,7 @@
             <p>
                 You know the drill.
                 <br />
-                5 letters, 6 guesses.
+                1 word, 5 letters, 6 guesses.
                 <br />
                 Can you beat your friends?
             </p>
@@ -79,6 +79,7 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .left,
         .middle,
         .right {
@@ -89,8 +90,6 @@
             margin-right: auto;
             flex: 1;
         }
-       
-        
 
         .right {
             align-items: flex-end;
@@ -101,7 +100,6 @@
             text-align: right;
         }
 
-
         .middle {
             font-size: 36px;
         }
@@ -109,7 +107,7 @@
         .main {
             height: 100%;
             padding: 32px;
-            
+
         }
 
         .main p {
@@ -124,6 +122,16 @@
             font-weight: 700;
             text-decoration: none;
             margin-top: 16px;
+        }
+
+        @media (max-width: 800px) {
+            .main {
+                flex-flow: column;
+            }
+
+            .middle p {
+                font-size: 28px;
+            }
         }
     </style>
 </body>
