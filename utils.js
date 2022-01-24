@@ -13,9 +13,7 @@ const rooms = {}
 
 export const createRoom = () => {
     const id = nanoid()
-    const worda = wordList[Math.floor(Math.random() * wordList.length)]
-    console.log(worda)
-    const word = textEncoder.encode(worda)
+    const word = textEncoder.encode(wordList[Math.floor(Math.random() * wordList.length)])
     const letterCounts = {}
     word.forEach(letter => {
         letterCounts[letter] = (letterCounts[letter] || 0) + 1

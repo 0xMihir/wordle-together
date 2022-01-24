@@ -14,6 +14,7 @@
     let guessCount = 0
     let timer
     const url = new URL(window.location.href)
+    const gameStartSound = new Audio('/notification.wav')
     url.protocol = url.protocol.replace('http', 'ws')
 
     const ws = new WsHandler(url.href, (err, e) => {
@@ -66,6 +67,7 @@
             case 'gameStart':
                 waitingModal = false
                 timer.startTimer()
+                gameStartSound.play()
                 break
             case 'gameOver':
                 timer.stopTimer()
