@@ -4,7 +4,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-// TODO: remove swears
+
 const wordList = fs.readFileSync(path.resolve(__dirname, 'wordlist.txt'), 'utf8').split('\n')
 
 const textEncoder = new TextEncoder()

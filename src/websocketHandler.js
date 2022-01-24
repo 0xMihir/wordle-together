@@ -71,7 +71,6 @@ class wsHandler {
         this.ws.addEventListener('close', (event) => {
             const code = event.code
             const word = event.reason
-            console.log(word)
             switch (code) {
                 case wsCodes.roomNotFound:
                     cb(new Error('roomNotFound'), null)

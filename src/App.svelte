@@ -47,7 +47,6 @@
         }
         switch (e.event) {
             case 'guess':
-                console.log(e)
                 if (e.player === 0) {
                     if (e.colorMap) {
                         Object.keys(e.colorMap).forEach((letter) => {

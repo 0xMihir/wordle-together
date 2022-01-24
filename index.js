@@ -12,7 +12,7 @@ import {
     validateWord,
     tryDeleteRoom,
     matchMake
-} from './utils.js'
+} from './games.js'
 import arrayCodes, { intCodes, wsCodes } from './statusCodes.js'
 import dotenv from 'dotenv'
 dotenv.config()

@@ -50,7 +50,6 @@
     }
 
     export const shakeRow = () => {
-        console.log('hi')
         shakeRows[gridRow] = true
         setTimeout(() => {
             shakeRows[gridRow] = false
