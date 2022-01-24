@@ -11,7 +11,8 @@ import {
     getRoom,
     validateWord,
     tryDeleteRoom,
-    matchMake
+    matchMake,
+    getRoomCount
 } from './games.js'
 import arrayCodes, { intCodes, wsCodes } from './statusCodes.js'
 import dotenv from 'dotenv'
@@ -21,15 +22,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const { App, DEDICATED_COMPRESSOR_3KB } = uws
 const publicPath = path.resolve(__dirname, 'public')
 const serveStatic = serveDir(publicPath)
-const gameHTML = fs.readFileSync(path.resolve(__dirname, 'public/game.html'), 'utf8')
-const indexHTML = fs.readFileSync(path.resolve(__dirname, 'public/index.html'), 'utf8')
-const serviceWorker = fs.readFileSync(path.resolve(__dirname, 'public/build/sw.js'), 'utf8')
+const gameHTML = () => fs.readFileSync(path.resolve(__dirname, 'public/game.html'), 'utf8')
+const indexHTML = () => fs.readFileSync(path.resolve(__dirname, 'public/index.html'), 'utf8')
+const serviceWorker = () => fs.readFileSync(path.resolve(__dirname, 'public/build/sw.js'), 'utf8')
 const baseURL = process.env.BASE_URL || 'http://localhost:8080/game/'
 const redirectGame = (res, req) => {
     if (!isbot(req.getHeader('user-agent'))) {
         res.writeStatus('307').writeHeader('Location', baseURL + createRoom()).end()
     } else {
-        res.writeStatus('200').writeHeader('Content-Type', 'text/html; charset=UTF-8').end(gameHTML)
+        res.writeStatus('200').writeHeader('Content-Type', 'text/html; charset=UTF-8').end(gameHTML())
     }
 }
 const port = parseInt(process.env.PORT) || 8080
@@ -37,15 +38,16 @@ const textEncoder = new TextEncoder()
 
 App()
     .get('/', (res, req) => res.writeStatus('200')
-        .writeHeader('Content-Type', 'text/html; charset=UTF-8').end(indexHTML))
+        .writeHeader('Content-Type', 'text/html; charset=UTF-8').end(indexHTML()))
     .get('/game', redirectGame)
     .get('/game/', redirectGame)
     .get('/build/sw.js', (res, req) => res.writeStatus('200')
         .writeHeader('Content-Type', 'text/javascript; charset=UTF-8')
         .writeHeader('Service-Worker-Allowed', '/')
-        .end(serviceWorker))
-    .get('/*', serveStatic) // look into caching entire public folder,
-    .get('/game/:room', (res, req) => { // possibly create separate assets folder
+        .end(serviceWorker()))
+    .get('/gameCount', (res, req) => res.end(JSON.stringify({ gameCount: getRoomCount() })))
+    .get('/*', serveStatic)
+    .get('/game/:room', (res, req) => {
         res.onAborted(() => {
             console.log('aborted')
         })
@@ -54,7 +56,7 @@ App()
             redirectGame(res, req)
         } else {
             res.writeStatus('200')
-                .writeHeader('Content-Type', 'text/html; charset=UTF-8').end(gameHTML)
+                .writeHeader('Content-Type', 'text/html; charset=UTF-8').end(gameHTML())
         }
     })
     .ws('/game/:room', {

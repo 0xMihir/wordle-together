@@ -67,3 +67,7 @@ export const tryDeleteRoom = (id) => {
     }
     return false
 }
+
+export const getRoomCount = () => {
+    return Object.keys(rooms).length
+}

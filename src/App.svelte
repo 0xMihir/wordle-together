@@ -13,6 +13,8 @@
     let win = false
     let guessCount = 0
     let timer
+    let matchmaking = false
+
     const url = new URL(window.location.href)
     const gameStartSound = new Audio('/notification.wav')
     url.protocol = url.protocol.replace('http', 'ws')
@@ -130,6 +132,7 @@
     //     return '...'
     // }
     const matchMake = () => {
+        matchmaking = true
         ws.matchMake()
     }
 </script>
@@ -161,7 +164,7 @@
     </div>
     <Modal
         bind:modalShow={waitingModal}
-        title={'Waiting for Opponent'}
+        title={matchmaking ? 'Matchmaking…' : 'Waiting for opponent'}
     >
         <div class="actions">
             <button on:click={() => { matchMake() }}>Play With Anyone</button>
