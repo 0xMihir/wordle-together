@@ -1179,6 +1179,7 @@ domes
 donas
 dongs
 donor
+donut
 dooms
 doors
 doped
@@ -1833,6 +1834,7 @@ gorge
 gorse
 goths
 gotta
+gouda
 gouge
 gourd
 gouty

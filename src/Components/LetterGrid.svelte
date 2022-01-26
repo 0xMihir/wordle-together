@@ -18,10 +18,11 @@
         ['', '', '', '', '']
     ]
     const shakeRows = [false, false, false, false, false, false]
-    let fontSize
+
+    let rowSize
     let gridRow = 0
     let gridCol = 0
-    
+
     export const handleBackspace = () => {
         if (gridCol > 0) {
             gridCol--
@@ -78,16 +79,14 @@
 
 <div class="guess-grid">
     {#each letterGrid as row, i}
-        <div class="guess-row {shakeRows[i] ? "shake-horizontal" : ""}" bind:clientHeight={fontSize}>
+        <div class="guess-row {shakeRows[i] ? "shake-horizontal" : ""}" bind:clientHeight={rowSize}>
             {#each row as letter, j}
-                <div class="guess-letter" style="{
-                        colorGrid[i][j] ? `background-color: ${mapColor(colorGrid[i][j])};` : ""
-                    } { 
-                        colorGrid[i][j] ? "color: #fff;" : "" 
-                    }; font-size:{
-                        fontSize * 0.8
+                <div class="guess-letter" style="width: {rowSize - 3}px; font-size:{
+                        rowSize * 0.6
                     }px; {
-                        colorGrid[i][j] ? 'border: none' : ''
+                        colorGrid[i][j]
+                        ? `color: #fff; border: none; background-color: ${mapColor(colorGrid[i][j])};`
+                        : ''
                     }">
                     {#if letter}
                         <span>{letter}</span>
@@ -110,6 +109,7 @@
         max-width: 90%;
         user-select: none;
     }
+   
     .guess-row {
         display: flex;
         flex-wrap: wrap;
@@ -132,12 +132,9 @@
         border-radius: 4px;
         text-transform: uppercase;
         min-width: 16px;
-        width: 2vw;
         min-height: 16px;
         flex:1;
-        flex-grow: 1;
         aspect-ratio: 1;
         border: 1.5px solid var(--color-border);
     }
-    
 </style>

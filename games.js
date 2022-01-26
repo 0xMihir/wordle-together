@@ -24,6 +24,11 @@ export const createRoom = () => {
         letterCounts: letterCounts,
         matchMake: false
     }
+    const interval = setInterval(() => {
+        if (tryDeleteRoom(id)) {
+            clearInterval(interval)
+        }
+    }, 20 * 1000 * 60)
     return id
 }
 
