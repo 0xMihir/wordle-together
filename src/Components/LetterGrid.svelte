@@ -75,13 +75,14 @@
         }
         return string
     }
+    const isSafari = window.safari !== undefined
 </script>
 
 <div class="guess-grid">
     {#each letterGrid as row, i}
         <div class="guess-row {shakeRows[i] ? "shake-horizontal" : ""}" bind:clientHeight={rowSize}>
             {#each row as letter, j}
-                <div class="guess-letter" style="width: {rowSize - 3}px; font-size:{
+                <div class="guess-letter" style="{isSafari ? `width: ${rowSize - 3}px;` : ""} font-size:{
                         rowSize * 0.6
                     }px; {
                         colorGrid[i][j]
