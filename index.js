@@ -18,6 +18,11 @@ import arrayCodes, { intCodes, wsCodes } from './statusCodes.js'
 import dotenv from 'dotenv'
 dotenv.config()
 
+// Keep the server alive if a single request/message handler throws;
+// without this an uncaught error takes down every active game at once.
+process.on('uncaughtException', (err) => console.error('Uncaught exception:', err))
+process.on('unhandledRejection', (reason) => console.error('Unhandled rejection:', reason))
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const { App, DEDICATED_COMPRESSOR_3KB } = uws
 const publicPath = path.resolve(__dirname, 'public')
@@ -48,10 +53,12 @@ App()
     .get('/gameCount', (res, req) => res.end(JSON.stringify({ gameCount: getRoomCount() })))
     .get('/*', serveStatic)
     .get('/game/:room', (res, req) => {
+        let aborted = false
         res.onAborted(() => {
-            console.log('aborted')
+            aborted = true
         })
         const room = req.getParameter(0)
+        if (aborted) return
         if (!roomExists(room) || !room) {
             redirectGame(res, req)
         } else {
@@ -154,19 +161,27 @@ App()
         },
 
         upgrade: (res, req, ctx) => {
+            let aborted = false
             res.onAborted(() => {
-                console.log('aborted')
+                aborted = true
             })
             const room = req.getParameter(0)
+            const secWebSocketKey = req.getHeader('sec-websocket-key')
+            const secWebSocketProtocol = req.getHeader('sec-websocket-protocol')
+            const secWebSocketExtensions = req.getHeader('sec-websocket-extensions')
+
+            // Bail out before createPlayer() runs -- otherwise an already-aborted
+            // handshake leaves an orphaned player entry that blocks room cleanup forever.
+            if (aborted) return
 
             if (!room || !roomExists(room)) {
                 res.writeStatus('400').end('invalidRoom')
             } else {
                 res.upgrade(
                     { room: room, id: createPlayer(room) },
-                    req.getHeader('sec-websocket-key'),
-                    req.getHeader('sec-websocket-protocol'),
-                    req.getHeader('sec-websocket-extensions'),
+                    secWebSocketKey,
+                    secWebSocketProtocol,
+                    secWebSocketExtensions,
                     ctx
                 )
             }
